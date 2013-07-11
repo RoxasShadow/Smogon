@@ -19,7 +19,6 @@
 
 module Smogon
   class Pokedex
-     
     def self.get(name)    
       begin
         url = URI::encode "http://www.smogon.com/bw/pokemon/#{name}"

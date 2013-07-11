@@ -18,7 +18,15 @@
 #++
 
 module Smogon
-  def self.version
-    '0.2'
+  class Ability
+    attr_accessor :name, :_name, :description
+    
+    def to_s
+      "Name: #{name}\nDescription: #{description}"
+    end
+    
+    def url
+      "http://www.smogon.com/bw/abilities/#{_name}"
+    end
   end
 end

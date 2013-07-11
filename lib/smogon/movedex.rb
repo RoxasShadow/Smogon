@@ -19,9 +19,7 @@
 
 module Smogon
   class Movedex 
-     
     def self.get(name, tier)
-      
       begin
         url = URI::encode "http://www.smogon.com/bw/pokemon/#{name}/#{tier}"
         

@@ -1,3 +1,4 @@
+#encoding: utf-8
 #--
 # Copyright(C) 2013 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
@@ -18,7 +19,12 @@
 #++
 
 module Smogon
-  def self.version
-    '0.2'
+  class Moveset
+    attr_accessor :pokemon, :name, :tier, :item, :ability, :nature, :moves, :evs
+    
+    def to_s
+      "Pokémon: #{pokemon}\nSet: #{name}\nItem: #{item.join(' / ')}\nAbility: #{ability.join(' / ')}\nNature: #{nature.join(' / ')}\nMoves: #{''.tap { |s| moves.each { |move| s << move.join(' / ') + ', '}}[0..-3]}\nEVs: #{evs}"
+    end
+    
   end
 end

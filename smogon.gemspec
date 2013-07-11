@@ -1,6 +1,6 @@
 Kernel.load 'lib/smogon/version.rb'
 
-Gem::Specification.new {|s|
+Gem::Specification.new { |s|
 	s.name          = 'smogon'
 	s.version       = Smogon::version
 	s.author        = 'Giovanni Capuano'
@@ -9,6 +9,7 @@ Gem::Specification.new {|s|
 	s.platform      = Gem::Platform::RUBY
 	s.summary       = 'Smogon API in Ruby.'
 	s.description   = 'API written in Ruby to get Pokémon infos and movesets from Smogon.'
+  s.licenses      = 'GPL-3'
 
 	s.require_paths = ['lib']
 	s.files         = Dir.glob('lib/**/*.rb')

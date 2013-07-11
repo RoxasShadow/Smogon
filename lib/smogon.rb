@@ -20,10 +20,12 @@
 require 'open-uri'
 require 'nokogiri'
 
-require 'smogon/pokemon'
-require 'smogon/pokedex'
+require 'smogon/types/pokemon'
+require 'smogon/types/moveset'
+require 'smogon/types/ability'
 
-require 'smogon/moveset'
+require 'smogon/pokedex'
 require 'smogon/movedex'
+require 'smogon/abilitydex'
 
 require 'smogon/version'

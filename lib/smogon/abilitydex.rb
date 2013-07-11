@@ -18,7 +18,35 @@
 #++
 
 module Smogon
-  def self.version
-    '0.2'
+  class Abilitydex 
+    def self.get(name)
+      begin
+        name.downcase.gsub!(/\s/, ?_)
+        url = URI::encode "http://www.smogon.com/bw/abilities/#{name}"
+        
+        smogon = Nokogiri::HTML(open(url))
+      rescue
+        return nil
+      end
+      
+      ability = Ability.new
+      
+      s = smogon.xpath('//div[@id="content_wrapper"]')[0]
+      ability.name        = s.xpath('.//h1').first.text
+      ability._name       = name
+      
+      ability.description = ''.tap { |d|
+        h2 = 0
+        s.children.each { |c|
+          if c.name == 'h2'          
+            h2 += 1
+            next
+          end
+          d << c.text if h2 == 1 && !c.text.strip.empty?
+        }
+      }
+      
+      return ability
+    end
   end
 end
