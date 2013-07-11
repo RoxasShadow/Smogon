@@ -21,7 +21,7 @@ module Smogon
   class Abilitydex 
     def self.get(name)
       begin
-        name.downcase.gsub!(/\s/, ?_)
+        name = name.downcase.gsub /\s/, ?_
         url = URI::encode "http://www.smogon.com/bw/abilities/#{name}"
         
         smogon = Nokogiri::HTML(open(url))
