@@ -19,63 +19,47 @@
 
 module Smogon
   class Movedex 
-    def self.get(name, tier)
+    def self.get(name)
       begin
-        url = URI::encode "http://www.smogon.com/bw/pokemon/#{name}/#{tier}"
+        name = name.downcase.gsub /\s/, ?_
+        url = URI::encode "http://www.smogon.com/bw/moves/#{name}"
         
         smogon = Nokogiri::HTML(open(url))
       rescue
         return nil
       end
       
-      movesets = []
+      move = Move.new
       
-      smogon.xpath('//table[@class="info strategyheader"]').each { |s|
-        moveset = Moveset.new
-        
-        moveset.pokemon = smogon.xpath('//tr/td[@class="header"]/h1').last.text
-        moveset.name    = s.xpath('tr')[1].xpath('td[@class="name"]/h2').first.text
-        moveset.tier    = smogon.xpath('//div[@id="content_wrapper"]/ul/li/strong').last.text
-        
-        s.xpath('.//a').each { |a|
-          (moveset.item    ||= []) << a.text if a['href'].include? '/items/'
-          (moveset.ability ||= []) << a.text if a['href'].include? '/abilities/'
-          (moveset.nature  ||= []) << a.text if a['href'].include? '/natures/'
-        }
-        
-        movesets << moveset
-      }
+      move.name        = smogon.xpath('//div[@id="content_wrapper"]/h1').first.text
+      move._name       = name
       
-      i = 0
-      smogon.xpath('//table[@class="info moveset"]').each { |s|
-        moveset = movesets[i]
-        
-        continue = false
-        s.xpath('.//td')[0].text.each_line { |a|
-          a = a.gsub(/\n?/, '').strip
-          if a == ?~
-            continue = false
-          elsif a == ?/
-            continue = true
-          elsif a.empty?
+      move.description = ''.tap { |d|
+        h2 = 0
+        ul = 0
+        smogon.xpath('//div[@id="content_wrapper"]').children.each { |c|
+          if c.name == 'h2'
+            h2 += 1
             next
-          elsif a != ?~ && a != ?/
-            if continue
-              moveset.moves.last << a
-            else
-              (moveset.moves ||= []) << [a]
-            end
-            continue = false
           end
+          if c.name == 'ul'
+            ul += 1
+            next
+          end
+          break if ul >= 2
+          d << c.text if h2 == 1 && !c.text.strip.empty?
         }
-        
-        moveset.evs = s.xpath('.//td').last.text.strip
-        
-        movesets[i] = moveset
-        i += 1
       }
-     
-      return movesets
+      
+      info = smogon.xpath('//table[@class="info"]/tr')[1].xpath('.//td')
+      move.type     = info[0].text
+      move.power    = info[1].text
+      move.accuracy = info[2].text
+      move.pp       = info[3].text
+      move.priority = info[4].text
+      move.damage   = info[5].text.strip
+      move.target   = info[6].text.strip
+      return move
     end
   end
 end

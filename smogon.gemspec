@@ -8,7 +8,7 @@ Gem::Specification.new { |s|
 	s.homepage      = 'http://www.giovannicapuano.net'
 	s.platform      = Gem::Platform::RUBY
 	s.summary       = 'Smogon API in Ruby.'
-	s.description   = 'API written in Ruby to get Pokémon infos and movesets from Smogon.'
+	s.description   = 'API written in Ruby to get (Poké|Ability|Move|Moveset)dex from Smogon.'
   s.licenses      = 'GPL-3'
 
 	s.require_paths = ['lib']
