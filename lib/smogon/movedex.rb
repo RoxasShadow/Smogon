@@ -22,7 +22,7 @@ module Smogon
     def self.get(name)
       begin
         name = name.downcase.gsub /\s/, ?_
-        url = URI::encode "http://www.smogon.com/bw/moves/#{name}"
+        url  = URI::encode "http://www.smogon.com/bw/moves/#{name}"
         
         smogon = Nokogiri::HTML(open(url))
       rescue
@@ -31,8 +31,8 @@ module Smogon
       
       move = Move.new
       
-      move.name        = smogon.xpath('//div[@id="content_wrapper"]/h1').first.text
-      move._name       = name
+      move.name  = smogon.xpath('//div[@id="content_wrapper"]/h1').first.text
+      move._name = name
       
       move.description = ''.tap { |d|
         h2 = 0

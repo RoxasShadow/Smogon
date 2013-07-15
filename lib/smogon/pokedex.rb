@@ -24,7 +24,7 @@ module Smogon
         url = URI::encode "http://www.smogon.com/bw/pokemon/#{name}"
         
         pokemon = Pokemon.new
-        smogon = Nokogiri::HTML(open(url))
+        smogon  = Nokogiri::HTML(open(url))
       rescue
         return nil
       end
