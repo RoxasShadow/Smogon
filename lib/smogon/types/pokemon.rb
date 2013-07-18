@@ -28,5 +28,13 @@ module Smogon
     def url
       "http://www.smogon.com/bw/pokemon/#{_name}"
     end
+    
+    def self.id2name(id)
+      begin
+        return Nokogiri::HTML(open("http://www.marriland.com/pokedex/#{id}")).xpath('//div[@class="overview"]/h2')[0].text
+      rescue
+        return nil
+      end
+    end
   end
 end
