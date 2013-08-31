@@ -19,9 +19,9 @@
 
 module Smogon
   class Movesetdex 
-    def self.get(name, tier)
+    def self.get(name, tier, metagame)
       begin
-        url = URI::encode "http://www.smogon.com/bw/pokemon/#{name}/#{tier}"
+        url = URI::encode "http://www.smogon.com/#{metagame}/pokemon/#{name}/#{tier}"
         
         smogon = Nokogiri::HTML(open(url))
       rescue
@@ -38,9 +38,9 @@ module Smogon
         moveset.tier    = smogon.xpath('//div[@id="content_wrapper"]/ul/li/strong').last.text
         
         s.xpath('.//a').each { |a|
-          (moveset.item    ||= []) << a.text if a['href'].include? '/items/'
-          (moveset.ability ||= []) << a.text if a['href'].include? '/abilities/'
-          (moveset.nature  ||= []) << a.text if a['href'].include? '/natures/'
+          moveset.item    << a.text if a['href'].include? '/items/'
+          moveset.ability << a.text if a['href'].include? '/abilities/'
+          moveset.nature  << a.text if a['href'].include? '/natures/'
         }
         
         movesets << moveset
@@ -63,7 +63,7 @@ module Smogon
             if continue
               moveset.moves.last << a
             else
-              (moveset.moves ||= []) << [a]
+              moveset.moves << [a]
             end
             continue = false
           end

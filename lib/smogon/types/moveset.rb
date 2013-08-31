@@ -22,6 +22,13 @@ module Smogon
   class Moveset
     attr_accessor :pokemon, :name, :tier, :item, :ability, :nature, :moves, :evs
     
+    def initialize
+      @item    = []
+      @ability = []
+      @nature  = []
+      @moves   = []
+    end
+
     def to_s
       "Pokémon: #{pokemon}\nSet: #{name}\nItem: #{item.join(' / ')}\nAbility: #{ability.join(' / ')}\nNature: #{nature.join(' / ')}\nMoves: #{''.tap { |s| moves.each { |move| s << move.join(' / ') + ', '}}[0..-3]}\nEVs: #{evs}"
     end
