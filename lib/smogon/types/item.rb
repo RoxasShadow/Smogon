@@ -18,7 +18,15 @@
 #++
 
 module Smogon
-  def self.version
-    '0.4'
+  class Item
+    attr_accessor :name, :_name, :description
+    
+    def to_s
+      "Name: #{name}\nDescription: #{description}"
+    end
+    
+    def url
+      "http://www.smogon.com/bw/items/#{_name}"
+    end
   end
 end

@@ -22,11 +22,13 @@ require 'nokogiri'
 
 require 'smogon/types/pokemon'
 require 'smogon/types/ability'
+require 'smogon/types/item'
 require 'smogon/types/move'
 require 'smogon/types/moveset'
 
 require 'smogon/pokedex'
 require 'smogon/abilitydex'
+require 'smogon/itemdex'
 require 'smogon/movedex'
 require 'smogon/movesetdex'
 
