@@ -19,6 +19,6 @@
 
 module Smogon
   def self.version
-    '0.4'
+    '0.4.1'
   end
 end
