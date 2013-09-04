@@ -37,21 +37,28 @@ module Smogon
         moveset.name    = s.xpath('tr')[1].xpath('td[@class="name"]/h2').first.text
         moveset.tier    = smogon.xpath('//div[@id="content_wrapper"]/ul/li/strong').last.text
         
-        s.xpath('.//a').each { |a|
-          moveset.item    << a.text if a['href'].include? '/items/'
-          moveset.ability << a.text if a['href'].include? '/abilities/'
-          moveset.nature  << a.text if a['href'].include? '/natures/'
-        }
+        if metagame == 'gs'
+          s.xpath('.//a').each { |a|
+            moveset.item    << a.text if a['href'].include? '/items/'
+          }
+        elsif metagame != 'rb'
+          s.xpath('.//a').each { |a|
+            moveset.item    << a.text if a['href'].include? '/items/'
+            moveset.ability << a.text if a['href'].include? '/abilities/'
+            moveset.nature  << a.text if a['href'].include? '/natures/'
+          }
+        end
         
         movesets << moveset
       }
       
       i = 0
-      smogon.xpath('//table[@class="info moveset"]').each { |s|
+      xpath = metagame == 'rb' ? '//td[@class="rbymoves"]' : '//table[@class="info moveset"]'
+      smogon.xpath(xpath).each { |s|
         moveset = movesets[i]
         
         continue = false
-        s.xpath('.//td')[0].text.each_line { |a|
+        (metagame == 'rb' ? s : s.xpath('.//td')[0]).text.each_line { |a|
           a = a.gsub(/\n?/, '').strip
           if a == ?~
             continue = false
@@ -69,7 +76,7 @@ module Smogon
           end
         }
         
-        moveset.evs = s.xpath('.//td').last.text.strip
+        moveset.evs = s.xpath('.//td').last.text.strip if metagame != 'rb' && metagame != 'gs'
         
         movesets[i] = moveset
         i += 1
