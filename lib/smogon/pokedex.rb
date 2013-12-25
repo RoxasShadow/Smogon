@@ -47,7 +47,7 @@ module Smogon
       begin
         (pokemon.abilities ||= []) << smogon.xpath('//td[@class="ability"]/dl/dt/em/a').first.text
       rescue
-        # No dream world ability :(
+        # No dream world abilities :(
       end
       
       smogon.xpath('//td[@class="bar"]').each { |base_stat|
