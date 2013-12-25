@@ -23,8 +23,11 @@ module Smogon
       begin
         url = URI::encode "http://www.smogon.com/bw/pokemon/#{name}"
         
+        movesUrl = URI::encode "http://www.smogon.com/rs/pokemon/#{name}/moves"
+
         pokemon = Pokemon.new
         smogon  = Nokogiri::HTML(open(url))
+        moves = Nokogiri::HTML(open(movesUrl))
       rescue
         return nil
       end
@@ -52,6 +55,10 @@ module Smogon
         (pokemon.base_stats ||= []) << base_stat.text.strip
       }
       
+      moves.xpath('//table[starts-with(@id, "move_list")]/tbody/tr').each { |tr|
+        (pokemon.moves ||= []) << tr.xpath('.//td')[0].text.strip
+      }
+
       return pokemon
     end
   end
