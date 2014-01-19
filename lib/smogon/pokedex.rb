@@ -24,41 +24,40 @@ module Smogon
         url       = URI::encode "http://www.smogon.com/bw/pokemon/#{name}"
         moves_url = URI::encode "http://www.smogon.com/bw/pokemon/#{name}/moves"
 
-        pokemon = Pokemon.new
-        smogon  = Nokogiri::HTML open(url)
-        moves   = Nokogiri::HTML open(moves_url)
+        smogon  = Nokogiri::HTML open url
+        moves   = Nokogiri::HTML open moves_url
       rescue
         return nil
       end
-      
-      pokemon.name  = smogon.xpath('//td[@class="header"]/h1').last.text
-      pokemon._name = pokemon.name.downcase
-      
-      smogon.xpath('//table[@class="info"]/tr/td/a')[0..-2].each { |type|
-        (pokemon.types ||= []) << type.text
-      }
-      
-      pokemon.tier = smogon.xpath('//table[@class="info"]/tr/td/a').last.text
-      
-      smogon.xpath('//td[@class="ability"]/dl/dt/a').each { |ability|
-        (pokemon.abilities ||= []) << ability.text
-      }
-      
-      begin
-        (pokemon.abilities ||= []) << smogon.xpath('//td[@class="ability"]/dl/dt/em/a').first.text
-      rescue
-        # No dream world abilities :(
-      end
-      
-      smogon.xpath('//td[@class="bar"]').each { |base_stat|
-        (pokemon.base_stats ||= []) << base_stat.text.strip
-      }
-      
-      moves.xpath('//table[starts-with(@id, "move_list")]/tbody/tr').each { |tr|
-        (pokemon.moves ||= []) << tr.xpath('.//td')[0].text.strip
-      }
 
-      return pokemon
+      Pokemon.new.tap { |pokemon|
+        pokemon.name  = smogon.xpath('//td[@class="header"]/h1').last.text
+        pokemon._name = pokemon.name.downcase
+        
+        smogon.xpath('//table[@class="info"]/tr/td/a')[0..-2].each { |type|
+          (pokemon.types      ||= []) << type.text
+        }
+        
+        pokemon.tier = smogon.xpath('//table[@class="info"]/tr/td/a').last.text
+        
+        smogon.xpath('//td[@class="ability"]/dl/dt/a').each { |ability|
+          (pokemon.abilities  ||= []) << ability.text
+        }
+        
+        begin
+          (pokemon.abilities  ||= []) << smogon.xpath('//td[@class="ability"]/dl/dt/em/a').first.text
+        rescue
+          # No dream world abilities :(
+        end
+        
+        smogon.xpath('//td[@class="bar"]').each { |base_stat|
+          (pokemon.base_stats ||= []) << base_stat.text.strip
+        }
+        
+        moves.xpath('//table[starts-with(@id, "move_list")]/tbody/tr').each { |tr|
+          (pokemon.moves      ||= []) << tr.xpath('.//td')[0].text.strip
+        }
+      }
     end
   end
 end

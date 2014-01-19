@@ -22,18 +22,18 @@ module Smogon
     attr_accessor :name, :_name, :types, :tier, :abilities, :base_stats, :moves
     
     def to_s
-      "Name: #{name}\nAbility: #{abilities.join(', ')}\nType: #{types.join(?/)}\nTier: #{tier}\nBase stats: #{base_stats.join(?/)}\nMoves: #{moves.join(', ')}"
+      "Name: #{@name}\nAbility: #{@abilities.join(', ')}\nType: #{@types.join(?/)}\nTier: #{@tier}\nBase stats: #{@base_stats.join(?/)}\nMoves: #{@moves.join(', ')}"
     end
     
     def url
-      "http://www.smogon.com/bw/pokemon/#{_name}"
+      "http://www.smogon.com/bw/pokemon/#{@_name}"
     end
     
     def self.id2name(id)
       begin
-        return Nokogiri::HTML(open("http://www.marriland.com/pokedex/#{id}")).xpath('//div[@class="overview"]/h2')[0].text
+        Nokogiri::HTML(open("http://www.marriland.com/pokedex/#{id}")).xpath('//div[@class="overview"]/h2')[0].text
       rescue
-        return nil
+        nil
       end
     end
   end

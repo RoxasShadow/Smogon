@@ -21,38 +21,35 @@ module Smogon
   class Itemdex 
     def self.get(name)
       begin
-        name = name.downcase.gsub /\s/, ?_
-        url  = URI::encode "http://www.smogon.com/bw/items/#{name}"
-        
-        smogon = Nokogiri::HTML(open(url))
+        name   = name.downcase.gsub /\s/, ?_
+        url    = URI::encode "http://www.smogon.com/bw/items/#{name}"
+        smogon = Nokogiri::HTML open(url)
       rescue
         return nil
       end
       
-      item = Item.new
-      
-      s = smogon.xpath('//div[@id="content_wrapper"]')[0]
-      item.name  = s.xpath('.//h1').first.text
-      item._name = name
-      
-      item.description = ''.tap { |d|
-        h2 = 0
-        ul = 0
-        s.children.each { |c|
-          if c.name == 'h2'
-            h2 += 1
-            next
-          end
-          if c.name == 'ul'
-            ul += 1
-            next
-          end
-          break if ul >= 2
-          d << c.text if h2 == 1 && !c.text.strip.empty?
+      Item.new.tap { |item|
+        s = smogon.xpath('//div[@id="content_wrapper"]')[0]
+        item.name  = s.xpath('.//h1').first.text
+        item._name = name
+        
+        item.description = ''.tap { |d|
+          h2 = 0
+          ul = 0
+          s.children.each { |c|
+            if c.name == 'h2'
+              h2 += 1
+              next
+            end
+            if c.name == 'ul'
+              ul += 1
+              next
+            end
+            break if ul >= 2
+            d << c.text if h2 == 1 && !c.text.strip.empty?
+          }
         }
       }
-      
-      return item
     end
   end
 end

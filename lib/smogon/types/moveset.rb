@@ -30,8 +30,7 @@ module Smogon
     end
 
     def to_s
-      "Pokémon: #{pokemon}\nSet: #{name}\nItem: #{item.join(' / ')}\nAbility: #{ability.join(' / ')}\nNature: #{nature.join(' / ')}\nMoves: #{''.tap { |s| moves.each { |move| s << move.join(' / ') + ', '}}[0..-3]}\nEVs: #{evs}"
+      "Pokémon: #{@pokemon}\nSet: #{@name}\nItem: #{@item.join(' / ')}\nAbility: #{@ability.join(' / ')}\nNature: #{@nature.join(' / ')}\nMoves: #{''.tap { |s| @moves.each { |move| s << move.join(' / ') + ', '}}[0..-3]}\nEVs: #{@evs}"
     end
-    
   end
 end

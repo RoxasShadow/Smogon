@@ -13,6 +13,10 @@ Gem::Specification.new { |s|
 
 	s.require_paths = ['lib']
 	s.files         = Dir.glob('lib/**/*.rb')
+  s.test_files    = Dir.glob('spec/**/*_spec.rb')
 
-	s.add_runtime_dependency 'nokogiri'
+	s.add_dependency 'nokogiri'
+
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rspec'
 }

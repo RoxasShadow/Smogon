@@ -21,68 +21,65 @@ module Smogon
   class Movesetdex 
     def self.get(name, tier, metagame)
       begin
-        url = URI::encode "http://www.smogon.com/#{metagame}/pokemon/#{name}/#{tier}"
-        
+        url    = URI::encode "http://www.smogon.com/#{metagame}/pokemon/#{name}/#{tier}"
         smogon = Nokogiri::HTML(open(url))
       rescue
         return nil
       end
       
-      movesets = []
-      
-      smogon.xpath('//table[@class="info strategyheader"]').each { |s|
-        moveset = Moveset.new
-        
-        moveset.pokemon = smogon.xpath('//tr/td[@class="header"]/h1').last.text
-        moveset.name    = s.xpath('tr')[1].xpath('td[@class="name"]/h2').first.text
-        moveset.tier    = smogon.xpath('//div[@id="content_wrapper"]/ul/li/strong').last.text
-        
-        if metagame == 'gs'
-          s.xpath('.//a').each { |a|
-            moveset.item    << a.text if a['href'].include? '/items/'
-          }
-        elsif metagame != 'rb'
-          s.xpath('.//a').each { |a|
-            moveset.item    << a.text if a['href'].include? '/items/'
-            moveset.ability << a.text if a['href'].include? '/abilities/'
-            moveset.nature  << a.text if a['href'].include? '/natures/'
-          }
-        end
-        
-        movesets << moveset
-      }
-      
-      i = 0
-      xpath = metagame == 'rb' ? '//td[@class="rbymoves"]' : '//table[@class="info moveset"]'
-      smogon.xpath(xpath).each { |s|
-        moveset = movesets[i]
-        
-        continue = false
-        (metagame == 'rb' ? s : s.xpath('.//td')[0]).text.each_line { |a|
-          a = a.gsub(/\n?/, '').strip
-          if a == ?~
-            continue = false
-          elsif a == ?/
-            continue = true
-          elsif a.empty?
-            next
-          elsif a != ?~ && a != ?/
-            if continue
-              moveset.moves.last << a
-            else
-              moveset.moves << [a]
-            end
-            continue = false
+      [].tap { |movesets|
+        smogon.xpath('//table[@class="info strategyheader"]').each { |s|
+          moveset = Moveset.new
+          
+          moveset.pokemon = smogon.xpath('//tr/td[@class="header"]/h1').last.text
+          moveset.name    = s.xpath('tr')[1].xpath('td[@class="name"]/h2').first.text
+          moveset.tier    = smogon.xpath('//div[@id="content_wrapper"]/ul/li/strong').last.text
+          
+          if metagame == 'gs'
+            s.xpath('.//a').each { |a|
+              moveset.item    << a.text if a['href'].include? '/items/'
+            }
+          elsif metagame != 'rb'
+            s.xpath('.//a').each { |a|
+              moveset.item    << a.text if a['href'].include? '/items/'
+              moveset.ability << a.text if a['href'].include? '/abilities/'
+              moveset.nature  << a.text if a['href'].include? '/natures/'
+            }
           end
+          
+          movesets << moveset
         }
         
-        moveset.evs = s.xpath('.//td').last.text.strip if metagame != 'rb' && metagame != 'gs'
-        
-        movesets[i] = moveset
-        i += 1
+        i = 0
+        xpath = metagame == 'rb' ? '//td[@class="rbymoves"]' : '//table[@class="info moveset"]'
+        smogon.xpath(xpath).each { |s|
+          moveset = movesets[i]
+          
+          continue = false
+          (metagame == 'rb' ? s : s.xpath('.//td')[0]).text.each_line { |a|
+            a = a.gsub(/\n?/, '').strip
+            if a == ?~
+              continue = false
+            elsif a == ?/
+              continue = true
+            elsif a.empty?
+              next
+            elsif a != ?~ && a != ?/
+              if continue
+                moveset.moves.last << a
+              else
+                moveset.moves << [a]
+              end
+              continue = false
+            end
+          }
+          
+          moveset.evs = s.xpath('.//td').last.text.strip if metagame != 'rb' && metagame != 'gs'
+          
+          movesets[i] = moveset
+          i += 1
+        }
       }
-     
-      return movesets
     end
   end
 end

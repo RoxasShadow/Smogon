@@ -22,11 +22,11 @@ module Smogon
     attr_accessor :name, :_name, :description
     
     def to_s
-      "Name: #{name}\nDescription: #{description}"
+      "Name: #{@name}\nDescription: #{@description}"
     end
     
     def url
-      "http://www.smogon.com/bw/abilities/#{_name}"
+      "http://www.smogon.com/bw/abilities/#{@_name}"
     end
   end
 end
