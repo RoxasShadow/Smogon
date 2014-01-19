@@ -31,4 +31,11 @@ describe 'Smogon' do
     moveset.any?.should                             be_true
     moveset.first.nature.include?('Jolly').should   be_true
   end
+
+  it 'returns the name of the Pokémon relative to the given ID' do
+    Smogon::Pokemon.id2name(111).should eql('Rhyhorn')
+    moveset = Smogon::Movesetdex.get                'Blaziken', 'uber', 'bw'
+    moveset.any?.should                             be_true
+    moveset.first.nature.include?('Jolly').should   be_true
+  end
 end
