@@ -22,7 +22,7 @@ module Smogon
     attr_accessor :name, :_name, :description, :type, :power, :accuracy, :pp, :priority, :damage, :target
     
     def to_s
-      "Name: #{@name}\nDescription: #{@description}\nType: #{@type}\nPower: #{@ower}\nAccuracy: #{@accuracy}\nPP: #{@pp}\nPriority: #{@priority}\nDamage: #{@damage}\nTarget: #{@target}"
+      "Name: #{@name}\nDescription: #{@description}\nType: #{@type}\nPower: #{@power}\nAccuracy: #{@accuracy}\nPP: #{@pp}\nPriority: #{@priority}\nDamage: #{@damage}\nTarget: #{@target}"
     end
     
     def url
