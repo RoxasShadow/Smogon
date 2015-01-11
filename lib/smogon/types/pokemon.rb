@@ -26,7 +26,7 @@ module Smogon
     end
     
     def url
-      "http://www.smogon.com/dex/#{API::GENERATION}/pokemon/#{@_name}"
+      "http://www.smogon.com/dex/#{API::METAGAME}/pokemon/#{@_name}"
     end
     
     def self.id2name(id)

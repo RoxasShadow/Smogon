@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2013 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -18,68 +18,66 @@
 #++
 
 module Smogon
-  class Movesetdex 
-    def self.get(name, tier, metagame)
-      begin
-        url    = URI::encode "http://www.smogon.com/#{metagame}/pokemon/#{name}/#{tier}"
-        smogon = Nokogiri::HTML(open(url))
-      rescue
-        return nil
-      end
+  class Movesetdex
+    def self.get(name, tier = nil, metagame = nil, fields = nil)
+      incapsulate = fields == nil
       
-      [].tap { |movesets|
-        smogon.xpath('//table[@class="info strategyheader"]').each { |s|
-          moveset = Moveset.new
-          
-          moveset.pokemon = smogon.xpath('//tr/td[@class="header"]/h1').last.text
-          moveset.name    = s.xpath('tr')[1].xpath('td[@class="name"]/h2').first.text
-          moveset.tier    = smogon.xpath('//div[@id="content_wrapper"]/ul/li/strong').last.text
-          
-          if metagame == 'gs'
-            s.xpath('.//a').each { |a|
-              moveset.item    << a.text if a['href'].include? '/items/'
-            }
-          elsif metagame != 'rb'
-            s.xpath('.//a').each { |a|
-              moveset.item    << a.text if a['href'].include? '/items/'
-              moveset.ability << a.text if a['href'].include? '/abilities/'
-              moveset.nature  << a.text if a['href'].include? '/natures/'
-            }
-          end
-          
-          movesets << moveset
-        }
-        
-        i = 0
-        xpath = metagame == 'rb' ? '//td[@class="rbymoves"]' : '//table[@class="info moveset"]'
-        smogon.xpath(xpath).each { |s|
-          moveset = movesets[i]
-          
-          continue = false
-          (metagame == 'rb' ? s : s.xpath('.//td')[0]).text.each_line { |a|
-            a = a.gsub(/\n?/, '').strip
-            if a == ?~
-              continue = false
-            elsif a == ?/
-              continue = true
-            elsif a.empty?
-              next
-            elsif a != ?~ && a != ?/
-              if continue
-                moveset.moves.last << a
+      fields ||= [
+        'name',
+        'movesets' => [
+          'name',
+          { 'tags'      => %w(shorthand) },
+          { 'items'     => %w(name)      },
+          { 'abilities' => %w(name)      },
+          { 'natures'   => %w(hp patk pdef spatk spdef spe) },
+          { 'moveslots' => [ 'slot', { 'move' => %(name) } ] },
+          { 'evconfigs' => %w(hp patk pdef spatk spdef spe) }
+        ]
+      ]
+
+      response = if metagame
+        API.using_metagame(metagame) do
+          API.request 'pokemon', name, fields
+        end
+      else
+        API.request 'pokemon', name, fields
+      end
+      return nil      if response.is_a?(String) || response.empty? || response.first.empty?
+      return response if not incapsulate
+
+      response = response.first
+      
+      results  = [].tap do |movesets|
+        response['movesets'].each do |movesetdex|
+          movesets << Moveset.new.tap do |moveset|
+            moveset.pokemon = response['name']
+            moveset.name    = movesetdex['name']
+            moveset.tier    = movesetdex['tags'][0]['shorthand']
+            moveset.item    = movesetdex['items'].collect(&:values).flatten
+            moveset.ability = movesetdex['abilities'].collect(&:values).flatten
+            moveset.nature  = Naturedex.get(movesetdex['natures'].first)
+
+            moveset.moves = []
+            movesetdex['moveslots'].each do |moveslot|
+              slot = moveslot['slot'] - 1
+
+              if moveset.moves[slot]
+                moveset.moves[slot] << moveslot['move_name']
               else
-                moveset.moves << [a]
+                moveset.moves << [ moveslot['move_name'] ]
               end
-              continue = false
             end
-          }
-          
-          moveset.evs = s.xpath('.//td').last.text.strip if metagame != 'rb' && metagame != 'gs'
-          
-          movesets[i] = moveset
-          i += 1
-        }
-      }
+
+            moveset.evs = [].tap do |evs|
+              ['hp', 'patk', 'pdef', 'spatk', 'spdef', 'spe'].each do |stat|
+                evs << movesetdex['evconfigs'].first[stat]
+              end
+            end.join ' / '
+          end
+        end
+      end
+
+      tier ? results.reject { |moveset| moveset.tier.downcase != tier.downcase } : results
     end
   end
 end

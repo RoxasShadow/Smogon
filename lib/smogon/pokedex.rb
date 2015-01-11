@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Smogon-API.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require 'smogon'
 
 module Smogon
   class Pokedex
@@ -36,30 +35,27 @@ module Smogon
       ]
 
       response = API.request 'pokemon', name, fields
-      return nil if response.is_a?(String)
+      return nil      if response.is_a?(String) || response.empty? || response.first.empty?
+      return response if not incapsulate
 
-      if incapsulate
-        response = response.first
-        pokedex  = response['alts'][0]
+      response = response.first
+      pokedex  = response['alts'][0]
+      
+      Pokemon.new.tap do |pokemon|
+        pokemon.name  = response['name']
+        pokemon._name = response['alias']
 
-        Pokemon.new.tap do |pokemon|
-          pokemon.name  = response['name']
-          pokemon._name = response['alias']
+        pokemon.types     = pokedex['types'].collect(&:values).flatten
+        pokemon.tier      = pokedex['tags'][0]['shorthand']
+        pokemon.abilities = pokedex['abilities'].collect(&:values).flatten
 
-          pokemon.types     = pokedex['types'].collect(&:values).flatten
-          pokemon.tier      = pokedex['tags'][0]['shorthand']
-          pokemon.abilities = pokedex['abilities'].collect(&:values).flatten
-
-          pokemon.base_stats = [].tap do |base_stats|
-            ['hp', 'patk', 'pdef', 'spatk', 'spdef', 'spe'].each do |stat|
-              base_stats << pokedex[stat]
-            end
+        pokemon.base_stats = [].tap do |base_stats|
+          ['hp', 'patk', 'pdef', 'spatk', 'spdef', 'spe'].each do |stat|
+            base_stats << pokedex[stat]
           end
-
-          pokemon.moves = response['moves'].collect(&:values).flatten
         end
-      else
-        response
+
+        pokemon.moves = response['moves'].collect(&:values).flatten
       end
     end
   end

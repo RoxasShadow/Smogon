@@ -28,6 +28,7 @@ require 'smogon/types/item'
 require 'smogon/types/move'
 require 'smogon/types/moveset'
 
+require 'smogon/naturedex'
 require 'smogon/pokedex'
 require 'smogon/abilitydex'
 require 'smogon/itemdex'

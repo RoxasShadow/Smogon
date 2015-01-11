@@ -20,12 +20,12 @@
 module Smogon
   class API
     class << self
-      ENDPOINT   = 'http://www.smogon.com/dex/api/query?q='
-      GENERATION = 'xy'
+      ENDPOINT = 'http://www.smogon.com/dex/api/query?q='
+      METAGAME = 'xy'
 
       def request(what, name, fields)
         query = {
-          what => { 'gen' => GENERATION, 'alias' => aliasize(name) },
+          what => { 'gen' => METAGAME, 'alias' => aliasize(name) },
           '$'  => fields
         }
 
@@ -33,6 +33,14 @@ module Smogon
         query = URI.escape(query, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
         response = JSON.parse open("#{ENDPOINT}#{query}").read
         response['status'] == 'success' ? response['result'] : response['message']
+      end
+
+      def using_metagame(metagame, &block)
+        default_metagame = METAGAME.dup
+        METAGAME.replace metagame
+        instance_eval(&block).tap do
+          METAGAME.replace default_metagame
+        end
       end
 
     private
