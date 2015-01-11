@@ -13,10 +13,10 @@ Gem::Specification.new do |s|
 
 	s.require_paths = ['lib']
 	s.files         = Dir.glob('lib/**/*.rb')
-	s.test_files    = Dir.glob('spec/**/*_spec.rb')
+	s.test_files    = Dir.glob('spec/**/*.rb')
 
-	s.add_dependency 'json'
+	s.add_dependency 'json', '~> 1.8'
 
-  s.add_development_dependency 'rake'
-  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'rake',  '~> 10.4'
+  s.add_development_dependency 'rspec', '~> 3.1'
 end
