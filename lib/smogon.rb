@@ -20,6 +20,8 @@
 require 'open-uri'
 require 'json'
 
+require 'smogon/api'
+
 require 'smogon/types/pokemon'
 require 'smogon/types/ability'
 require 'smogon/types/item'

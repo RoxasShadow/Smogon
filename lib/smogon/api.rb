@@ -25,11 +25,13 @@ module Smogon
 
       def request(what, name, fields)
         query = {
-          what => { 'gen' => GENERATION, 'alias' => aliasize(name) }
+          what => { 'gen' => GENERATION, 'alias' => aliasize(name) },
           '$'  => fields
         }
 
-        response = JSON.parse open("#{ENDPOINT}#{JSON.generate(body)}").read
+        query = JSON.generate(query)
+        query = URI.escape(query, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+        response = JSON.parse open("#{ENDPOINT}#{query}").read
         response['status'] == 'success' ? response['result'] : response['message']
       end
 
@@ -38,5 +40,6 @@ module Smogon
       def aliasize(string)
         string.downcase.gsub(/[^a-z]/i, '')
       end
+    end
   end
 end
