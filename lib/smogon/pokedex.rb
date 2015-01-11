@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2013 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -19,45 +19,44 @@
 
 module Smogon
   class Pokedex
-    def self.get(name)    
-      begin
-        url       = URI::encode "http://www.smogon.com/bw/pokemon/#{name}"
-        moves_url = URI::encode "http://www.smogon.com/bw/pokemon/#{name}/moves"
+    def self.get(name, fields = nil)
+      incapsulate = fields == nil
+      
+      fields ||= [
+        'name',
+        'alias'
+        'alts' => [
+          { 'types'     => %w(name)      },
+          { 'tags'      => %w(shorthand) },
+          { 'abilities' => %w(name)      },
+          'hp', 'patk', 'pdef', 'spatk', 'spdef', 'spe'
+        ],
+        'moves' => ['name']
+      ]
 
-        smogon  = Nokogiri::HTML open url
-        moves   = Nokogiri::HTML open moves_url
-      rescue
-        return nil
-      end
+      response = API.request 'pokemon', name
+      return nil if response.is_a?(String)
 
-      Pokemon.new.tap { |pokemon|
-        pokemon.name  = smogon.xpath('//td[@class="header"]/h1').last.text
-        pokemon._name = pokemon.name.downcase
-        
-        smogon.xpath('//table[@class="info"]/tr/td/a')[0..-2].each { |type|
-          (pokemon.types      ||= []) << type.text
-        }
-        
-        pokemon.tier = smogon.xpath('//table[@class="info"]/tr/td/a').last.text
-        
-        smogon.xpath('//td[@class="ability"]/dl/dt/a').each { |ability|
-          (pokemon.abilities  ||= []) << ability.text
-        }
-        
-        begin
-          (pokemon.abilities  ||= []) << smogon.xpath('//td[@class="ability"]/dl/dt/em/a').first.text
-        rescue
-          # No dream world abilities :(
+      if incapsulate
+        Pokemon.new.tap do |pokemon|
+          pokemon.name  = pokemon['name']
+          pokemon._name = pokemon['alias']
+
+          pokemon.types     = pokemon['alts']['types'].collect(&:values).flatten
+          pokemon.tier      = pokemon['alts']['tags'][0]['shorthand']
+          pokemon.abilities = pokemon['alts']['abilities'].collect(&:values)
+
+          pokemon.base_stats = [].tap do |base_stats|
+            ['hp', 'patk', 'pdef', 'spatk', 'spdef', 'spe'].each do |stat|
+              base_stats << pokemon['alts'][stat]
+            end
+          end
+
+          pokemon.moves = pokemon['moves'].collect(&:values)
         end
-        
-        smogon.xpath('//td[@class="bar"]').each { |base_stat|
-          (pokemon.base_stats ||= []) << base_stat.text.strip
-        }
-        
-        moves.xpath('//table[starts-with(@id, "move_list")]/tbody/tr').each { |tr|
-          (pokemon.moves      ||= []) << tr.xpath('.//td')[0].text.strip
-        }
-      }
+      else
+        response
+      end
     end
   end
 end

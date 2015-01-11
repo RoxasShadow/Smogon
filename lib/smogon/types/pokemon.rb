@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2013 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -26,7 +26,7 @@ module Smogon
     end
     
     def url
-      "http://www.smogon.com/bw/pokemon/#{@_name}"
+      "http://www.smogon.com/dex/#{API::GENERATION}/pokemon/#{@_name}"
     end
     
     def self.id2name(id)
