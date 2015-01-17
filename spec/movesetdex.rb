@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 require 'smogon'
 
-describe 'Pokedex' do
+describe 'Movesetdex' do
   it 'returns the moveset of given Pokémon and metagame' do
     movesets = Smogon::Movesetdex.get 'Abomasnow', 'UU', 'bw'
 

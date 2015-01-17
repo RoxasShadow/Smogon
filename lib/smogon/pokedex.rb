@@ -21,7 +21,7 @@ module Smogon
   class Pokedex
     def self.get(name, fields = nil)
       incapsulate = fields == nil
-      
+
       fields ||= [
         'name',
         'alias',
@@ -40,7 +40,7 @@ module Smogon
 
       response = response.first
       pokedex  = response['alts'][0]
-      
+
       Pokemon.new.tap do |pokemon|
         pokemon.name  = response['name']
         pokemon._name = response['alias']

@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2013 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -18,51 +18,35 @@
 #++
 
 module Smogon
-  class Movedex 
-    def self.get(name)
-      begin
-        name   = name.downcase.gsub /\s/, ?_
-        url    = URI::encode "http://www.smogon.com/bw/moves/#{name}"
-        smogon = Nokogiri::HTML open(url)
-      rescue
-        return nil
+  class Movedex
+    def self.get(name, fields = nil)
+      incapsulate = fields == nil
+
+      fields ||= [
+        'name',
+        'alias',
+        'description',
+        'power',
+        'accuracy',
+        'pp',
+        'type' => ['name'],
+      ]
+
+      response = API.request 'move', name, fields
+      return nil      if response.is_a?(String) || response.empty? || response.first.empty?
+      return response if not incapsulate
+
+      response = response.first
+
+      Move.new.tap do |move|
+        move.name        = response['name'       ]
+        move._name       = response['alias'      ]
+        move.description = response['description']
+        move.type        = response['type'       ].values.join(' / ')
+        move.power       = response['power'      ]
+        move.accuracy    = response['accuracy'   ]
+        move.pp          = response['pp'         ]
       end
-      
-      Move.new.tap { |move|      
-        move.name  = smogon.xpath('//div[@id="content_wrapper"]/h1').first.text
-        move._name = name
-        
-        move.description = ''.tap { |d|
-          h2 = 0
-          ul = 0
-          dl = 0
-          smogon.xpath('//div[@id="content_wrapper"]').children.each { |c|
-            if c.name == 'h2'
-              h2 += 1
-              next
-            end
-            if c.name == 'ul'
-              ul += 1
-              next
-            end
-            if c.name == 'dl'
-              dl += 1
-              next
-            end
-            break if ul >= 2 || dl >= 2
-            d << c.text if h2 == 1 && !c.text.strip.empty?
-          }
-        }
-        
-        info = smogon.xpath('//table[@class="info"]/tr')[1].xpath('.//td')
-        move.type     = info[0].text
-        move.power    = info[1].text
-        move.accuracy = info[2].text
-        move.pp       = info[3].text
-        move.priority = info[4].text
-        move.damage   = info[5].text.strip
-        move.target   = info[6].text.strip
-      }
     end
   end
 end

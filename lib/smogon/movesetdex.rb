@@ -21,7 +21,7 @@ module Smogon
   class Movesetdex
     def self.get(name, tier = nil, metagame = nil, fields = nil)
       incapsulate = fields == nil
-      
+
       fields ||= [
         'name',
         'movesets' => [
@@ -46,8 +46,8 @@ module Smogon
       return response if not incapsulate
 
       response = response.first
-      
-      results  = [].tap do |movesets|
+
+      results = [].tap do |movesets|
         response['movesets'].each do |movesetdex|
           movesets << Moveset.new.tap do |moveset|
             moveset.pokemon = response['name']

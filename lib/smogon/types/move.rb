@@ -19,14 +19,18 @@
 
 module Smogon
   class Move
-    attr_accessor :name, :_name, :description, :type, :power, :accuracy, :pp, :priority, :damage, :target
-    
+    attr_accessor :name, :_name, :description, :type, :power, :accuracy, :pp
+
     def to_s
-      "Name: #{@name}\nDescription: #{@description}\nType: #{@type}\nPower: #{@power}\nAccuracy: #{@accuracy}\nPP: #{@pp}\nPriority: #{@priority}\nDamage: #{@damage}\nTarget: #{@target}"
+      "Name: #{@name}\nDescription: #{@description}\nType: #{@type}\nPower: #{@power}\nAccuracy: #{@accuracy}\nPP: #{@pp}"
     end
-    
+
     def url
-      "http://www.smogon.com/bw/moves/#{@_name}"
+      "http://www.smogon.com/dex/#{API::METAGAME}/moves/#{@_name}"
+    end
+
+    %i(priority damage target).each do |m|
+      define_method(m) { '' }
     end
   end
 end
