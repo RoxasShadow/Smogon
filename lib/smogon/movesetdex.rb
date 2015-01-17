@@ -55,7 +55,7 @@ module Smogon
             moveset.tier    = movesetdex['tags'][0]['shorthand']
             moveset.item    = movesetdex['items'].collect(&:values).flatten
             moveset.ability = movesetdex['abilities'].collect(&:values).flatten
-            moveset.nature  = Naturedex.get(movesetdex['natures'].first)
+            moveset.nature = movesetdex['natures'].map { |nature| Naturedex.get(nature) }
 
             moveset.moves = []
             movesetdex['moveslots'].each do |moveslot|
