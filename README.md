@@ -1,6 +1,6 @@
 # Smogon-API
 
-API to get (Poké|Ability|Item|Move|Moveset)dex from Smogon.
+APIs wrapper to get (Poké|Ability|Item|Move|Moveset)dex data from Smogon.
 
 `Installation: [sudo] gem install smogon`
 
