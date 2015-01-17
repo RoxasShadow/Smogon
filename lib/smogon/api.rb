@@ -19,10 +19,10 @@
 
 module Smogon
   class API
-    class << self
-      ENDPOINT = 'http://www.smogon.com/dex/api/query?q='
-      METAGAME = 'xy'
+    METAGAME = 'xy'
+    ENDPOINT = 'http://www.smogon.com/dex/api/query?q='
 
+    class << self
       def request(what, name, fields)
         query = {
           what => { 'gen' => METAGAME, 'alias' => aliasize(name) },
@@ -37,7 +37,7 @@ module Smogon
 
       def using_metagame(metagame, &block)
         default_metagame = METAGAME.dup
-        METAGAME.replace metagame
+        METAGAME.replace aliasize(metagame)
         instance_eval(&block).tap do
           METAGAME.replace default_metagame
         end
