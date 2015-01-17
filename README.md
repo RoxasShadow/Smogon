@@ -6,12 +6,12 @@ API to get (Poké|Ability|Item|Move|Moveset)dex from Smogon.
 
 
     require 'smogon'
-    
+
     puts Smogon::Pokedex.get    'Blaziken'
     puts Smogon::Abilitydex.get 'Synchronize'
     puts Smogon::Itemdex.get    'Leftovers'
-    puts Smogon::Movedex.get    'Reflect'
-    puts Smogon::Movesetdex.get 'Blaziken', 'uber', 'bw'
+    puts Smogon::Movedex.get    'Extreme Speed'
+    puts Smogon::Movesetdex.get 'Abomasnow', 'UU', 'bw'
 
 # About the latest Smogon redesign...
 Well, they rebuilt the whole website, so now they have a back-end that servs the APIs and a front-end that just catches it and then fills the data into the DOM. This means that now we can (fortunately) just get whatever we want from the public APIs, instead of parsing static HTML pages.

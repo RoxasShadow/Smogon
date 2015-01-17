@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2013 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -20,13 +20,13 @@
 module Smogon
   class Ability
     attr_accessor :name, :_name, :description
-    
+
     def to_s
       "Name: #{@name}\nDescription: #{@description}"
     end
-    
+
     def url
-      "http://www.smogon.com/bw/abilities/#{@_name}"
+      "http://www.smogon.com/dex/#{API::METAGAME}/abilities/#{@_name}"
     end
   end
 end

@@ -21,6 +21,7 @@ require 'open-uri'
 require 'json'
 
 require 'smogon/api'
+require 'smogon/naturedex'
 
 require 'smogon/types/pokemon'
 require 'smogon/types/ability'
@@ -28,7 +29,6 @@ require 'smogon/types/item'
 require 'smogon/types/move'
 require 'smogon/types/moveset'
 
-require 'smogon/naturedex'
 require 'smogon/pokedex'
 require 'smogon/abilitydex'
 require 'smogon/itemdex'

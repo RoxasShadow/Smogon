@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2013 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -18,38 +18,27 @@
 #++
 
 module Smogon
-  class Abilitydex 
-    def self.get(name)
-      begin
-        name   = name.downcase.gsub /\s/, ?_
-        url    = URI::encode "http://www.smogon.com/bw/abilities/#{name}"
-        smogon = Nokogiri::HTML open(url)
-      rescue
-        return nil
+  class Abilitydex
+    def self.get(name, fields = nil)
+      incapsulate = fields == nil
+
+      fields ||= [
+        'name',
+        'alias',
+        'description'
+      ]
+
+      response = API.request 'ability', name, fields
+      return nil      if response.is_a?(String) || response.empty? || response.first.empty?
+      return response if not incapsulate
+
+      response = response.first
+
+      Ability.new.tap do |ability|
+        ability.name        = response['name'       ]
+        ability._name       = response['alias'      ]
+        ability.description = response['description']
       end
-      
-      Ability.new.tap { |ability|        
-        s = smogon.xpath('//div[@id="content_wrapper"]')[0]
-        ability.name  = s.xpath('.//h1').first.text
-        ability._name = name
-        
-        ability.description = ''.tap { |d|
-          h2 = 0
-          ul = 0
-          s.children.each { |c|
-            if c.name == 'h2'
-              h2 += 1
-              next
-            end
-            if c.name == 'ul'
-              ul += 1
-              next
-            end
-            break if ul >= 2
-            d << c.text if h2 == 1 && !c.text.strip.empty?
-          }
-        }
-      }
     end
   end
 end
