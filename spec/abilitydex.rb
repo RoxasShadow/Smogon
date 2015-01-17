@@ -7,5 +7,6 @@ describe 'Abilitydex' do
 
     expect(ability.name).to eq('Synchronize')
     expect(ability.description.length).to be > 10
+    expect(ability.to_s.length).to be > 10
   end
 end

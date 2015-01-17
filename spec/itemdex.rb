@@ -7,5 +7,6 @@ describe 'Itemdex' do
 
     expect(item.name).to eq('Leftovers')
     expect(item.description.length).to be > 10
+    expect(item.to_s.length).to be > 10
   end
 end

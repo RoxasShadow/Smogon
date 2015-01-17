@@ -21,7 +21,7 @@
 module Smogon
   class Moveset
     attr_accessor :pokemon, :name, :tier, :item, :ability, :nature, :moves, :evs
-    
+
     def initialize
       @item    = []
       @ability = []

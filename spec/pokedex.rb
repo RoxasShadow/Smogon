@@ -8,5 +8,6 @@ describe 'Pokedex' do
     expect(pokemon.name).to            eq('Blaziken')
     expect(pokemon.base_stats.last).to be 80
     expect(pokemon.moves.length).to    be > 10
+    expect(pokemon.to_s.length).to     be > 10
   end
 end

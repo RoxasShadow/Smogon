@@ -8,5 +8,6 @@ describe 'Movedex' do
     expect(move.name).to eq('Extreme Speed')
     expect(move.type).to eq('Normal')
     expect(move.pp).to   be 5
+    expect(move.to_s.length).to be > 10
   end
 end
