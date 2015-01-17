@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2013 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -18,38 +18,27 @@
 #++
 
 module Smogon
-  class Itemdex 
-    def self.get(name)
-      begin
-        name   = name.downcase.gsub /\s/, ?_
-        url    = URI::encode "http://www.smogon.com/bw/items/#{name}"
-        smogon = Nokogiri::HTML open(url)
-      rescue
-        return nil
+  class Itemdex
+    def self.get(name, fields = nil)
+      incapsulate = fields == nil
+
+      fields ||= [
+        'name',
+        'alias',
+        'description'
+      ]
+
+      response = API.request 'item', name, fields
+      return nil      if response.is_a?(String) || response.empty? || response.first.empty?
+      return response if not incapsulate
+
+      response = response.first
+
+      Item.new.tap do |item|
+        item.name        = response['name'       ]
+        item._name       = response['alias'      ]
+        item.description = response['description']
       end
-      
-      Item.new.tap { |item|
-        s = smogon.xpath('//div[@id="content_wrapper"]')[0]
-        item.name  = s.xpath('.//h1').first.text
-        item._name = name
-        
-        item.description = ''.tap { |d|
-          h2 = 0
-          ul = 0
-          s.children.each { |c|
-            if c.name == 'h2'
-              h2 += 1
-              next
-            end
-            if c.name == 'ul'
-              ul += 1
-              next
-            end
-            break if ul >= 2
-            d << c.text if h2 == 1 && !c.text.strip.empty?
-          }
-        }
-      }
     end
   end
 end

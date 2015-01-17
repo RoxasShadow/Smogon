@@ -20,13 +20,13 @@
 module Smogon
   class Item
     attr_accessor :name, :_name, :description
-    
+
     def to_s
       "Name: #{@name}\nDescription: #{@description}"
     end
-    
+
     def url
-      "http://www.smogon.com/bw/items/#{@_name}"
+      "http://www.smogon.com/dex/#{API::METAGAME}/items/#{@_name}"
     end
   end
 end
