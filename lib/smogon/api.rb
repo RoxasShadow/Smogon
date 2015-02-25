@@ -46,7 +46,7 @@ module Smogon
     private
 
       def aliasize(string)
-        string.downcase.gsub(' ', '_').gsub(/[^a-z_]/i, '')
+        string.downcase.gsub(' ', '_').gsub(/[^a-z0-9_\-]/i, '')
       end
     end
   end
