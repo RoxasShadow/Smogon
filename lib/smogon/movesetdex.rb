@@ -69,9 +69,11 @@ module Smogon
             end
 
             moveset.evs = [].tap do |evs|
+              evconfigs = movesetdex['evconfigs'].first
+
               ['hp', 'patk', 'pdef', 'spatk', 'spdef', 'spe'].each do |stat|
-                evs << movesetdex['evconfigs'].first[stat]
-              end
+                evs << evconfigs[stat]
+              end if evconfigs
             end.join ' / '
           end
         end

@@ -10,4 +10,8 @@ describe 'Movesetdex' do
     expect(movesets.first.nature.include?('Lonely')).to be_truthy
     expect(movesets.select { |moveset| moveset.tier != 'UU' }.length).to be 0
   end
+
+  it 'returns the moveset of given Pokémon and metagame having some empty field' do
+    Smogon::Movesetdex.get 'Metagross', 'OU', 'xy'
+  end
 end

@@ -27,6 +27,7 @@ module Smogon
       @ability = []
       @nature  = []
       @moves   = []
+      @evs     = []
     end
 
     def to_s
