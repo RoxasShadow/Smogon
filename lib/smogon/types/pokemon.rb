@@ -29,7 +29,9 @@ module Smogon
       TYPE = 'pokemon'.freeze
       STATS = %w(hp atk def spa spd spe).freeze
 
-      def initialize(response, moves)
+      def initialize(response = nil, moves = nil)
+        return unless response
+
         @name       = response['name']
         @evolutions = response['evos']
         @genfamily  = response['genfamily']
@@ -38,7 +40,7 @@ module Smogon
           moves.delete_if { |move| move.start_with?('Hidden Power ') }
           moves << 'Hidden Power'
         end
-        @moves = moves
+        @moves = moves.uniq
 
         alts = response['alts'][0]
         @base_stats = alts.fetch_values(*STATS)

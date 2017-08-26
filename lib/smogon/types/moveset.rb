@@ -26,7 +26,9 @@ module Smogon
 
       attr_accessor(*ATTRIBUTES)
 
-      def initialize(pokemon, tier, moveset)
+      def initialize(pokemon = nil, tier = nil, moveset = nil)
+        return if !pokemon
+
         @pokemon = pokemon
         @name = moveset['name']
         # @description = moveset['description']

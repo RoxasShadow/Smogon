@@ -20,7 +20,9 @@
 module Smogon
   module Type
     class Base
-      def initialize(response)
+      def initialize(response = nil)
+        return unless response
+
         attributes.each do |attr|
           public_send("#{attr}=", response[attr])
         end
