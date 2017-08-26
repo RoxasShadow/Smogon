@@ -34,8 +34,10 @@ module Smogon
 
       def to_s
         attributes.map do |attr|
-          "#{attr.capitalize}: #{public_send(attr)}"
-        end.join("\n")
+          val = public_send(attr)
+          val = val.join(', ') if val.is_a?(Array)
+          val == '' ? nil : "#{attr.capitalize}: #{val}"
+        end.compact.join("\n")
       end
 
       def url

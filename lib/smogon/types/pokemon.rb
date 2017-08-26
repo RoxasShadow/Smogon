@@ -33,12 +33,18 @@ module Smogon
         @name       = response['name']
         @evolutions = response['evos']
         @genfamily  = response['genfamily']
-        @moves      = moves
+
+        if moves.include?('Hidden Power Fire')
+          moves.delete_if { |move| move.start_with?('Hidden Power ') }
+          moves << 'Hidden Power'
+        end
+        @moves = moves
 
         alts = response['alts'][0]
         @base_stats = alts.fetch_values(*STATS)
         @weight     = alts['weight']
         @height     = alts['height']
+        @types      = alts['types']
         @abilities  = alts['abilities']
       end
 
