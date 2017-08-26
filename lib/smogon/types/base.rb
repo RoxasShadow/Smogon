@@ -39,7 +39,7 @@ module Smogon
       end
 
       def url
-        "http://www.smogon.com/dex/#{::Smogon::API::METAGAME}/#{self.TYPE}/#{name}"
+        "http://www.smogon.com/dex/#{::Smogon::API::METAGAME}/#{self.class::TYPE}/#{name}"
       end
 
       private

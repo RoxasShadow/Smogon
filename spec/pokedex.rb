@@ -9,6 +9,7 @@ describe 'Pokedex' do
     expect(pokemon.base_stats.last).to be 80
     expect(pokemon.moves.length).to    be > 10
     expect(pokemon.to_s.length).to     be > 10
+    expect(pokemon.url).to eq 'http://www.smogon.com/dex/sm/pokemon/Blaziken'
   end
 
   it 'returns the requested Pokémon containing special chars' do
