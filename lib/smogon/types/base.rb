@@ -18,11 +18,35 @@
 #++
 
 module Smogon
-  class Pokedex
-    def self.get(name)
-      response = API.request(:pokemon, name)
-      moves    = API.request(:pokemon, name, true)['learnset']
-      Type::Pokemon.new(response, moves)
+  module Type
+    class Base
+      def initialize(response)
+        attributes.each do |attr|
+          public_send("#{attr}=", response[attr])
+        end
+      end
+
+      def to_h
+        attributes.zip(
+          attributes.map { |attr| public_send(attr) }
+        ).to_h
+      end
+
+      def to_s
+        attributes.map do |attr|
+          "#{attr.capitalize}: #{public_send(attr)}"
+        end.join("\n")
+      end
+
+      def url
+        "http://www.smogon.com/dex/#{::Smogon::API::METAGAME}/#{self.TYPE}/#{name}"
+      end
+
+      private
+
+      def attributes
+        self.class::ATTRIBUTES
+      end
     end
   end
 end

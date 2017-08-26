@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2017 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -18,15 +18,15 @@
 #++
 
 module Smogon
-  class Item
-    attr_accessor :name, :_name, :description
+  module Type
+    class Item < Base
+      ATTRIBUTES = %w(
+        name description gen_family
+      ).freeze
 
-    def to_s
-      "Name: #{@name}\nDescription: #{@description}"
-    end
+      attr_accessor(*ATTRIBUTES)
 
-    def url
-      "http://www.smogon.com/dex/#{API::METAGAME}/items/#{@_name}"
+      TYPE = 'items'.freeze
     end
   end
 end

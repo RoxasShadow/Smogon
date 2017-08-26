@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2017 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -18,22 +18,36 @@
 #++
 
 module Smogon
-  class Pokemon
-    attr_accessor :name, :_name, :types, :tier, :abilities, :base_stats, :moves
-    
-    def to_s
-      "Name: #{@name}\nAbility: #{@abilities.join(', ')}\nType: #{@types.join(?/)}\nTier: #{@tier}\nBase stats: #{@base_stats.join(?/)}\nMoves: #{@moves.join(', ')}"
-    end
-    
-    def url
-      "http://www.smogon.com/dex/#{API::METAGAME}/pokemon/#{@_name}"
-    end
-    
-    def self.id2name(id)
-      begin
-        Nokogiri::HTML(open("http://www.marriland.com/pokedex/#{id}")).xpath('//div[@class="overview"]/h2')[0].text
-      rescue
-        nil
+  module Type
+    class Pokemon < Base
+      ATTRIBUTES = %w(
+        name base_stats weight height types abilities evolutions genfamily moves
+      ).freeze
+
+      attr_accessor(*ATTRIBUTES)
+
+      TYPE = 'pokemon'.freeze
+      STATS = %w(hp atk def spa spd spe).freeze
+
+      def initialize(response, moves)
+        @name       = response['name']
+        @evolutions = response['evos']
+        @genfamily  = response['genfamily']
+        @moves      = moves
+
+        alts = response['alts'][0]
+        @base_stats = alts.fetch_values(*STATS)
+        @weight     = alts['weight']
+        @height     = alts['height']
+        @abilities  = alts['abilities']
+      end
+
+      def self.id2name(id)
+        begin
+          Nokogiri::HTML(open("http://www.marriland.com/pokedex/#{id}")).xpath('//div[@class="overview"]/h2')[0].text
+        rescue
+          nil
+        end
       end
     end
   end

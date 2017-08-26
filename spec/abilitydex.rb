@@ -3,7 +3,7 @@ require 'smogon'
 
 describe 'Abilitydex' do
   it 'returns infos about the given ability' do
-    ability = Smogon::Abilitydex.get 'Synchronize'
+    ability = Smogon::Abilitydex.get('Synchronize')
 
     expect(ability.name).to eq('Synchronize')
     expect(ability.description.length).to be > 10

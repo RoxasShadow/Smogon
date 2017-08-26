@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2017 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -17,12 +17,13 @@
 # along with Smogon-API.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'open-uri'
+require 'net/http'
 require 'json'
 
 require 'smogon/api'
 require 'smogon/naturedex'
 
+require 'smogon/types/base'
 require 'smogon/types/pokemon'
 require 'smogon/types/ability'
 require 'smogon/types/item'

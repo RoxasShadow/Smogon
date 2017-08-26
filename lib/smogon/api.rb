@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2017 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -19,20 +19,30 @@
 
 module Smogon
   class API
-    METAGAME = 'xy'
-    ENDPOINT = 'http://www.smogon.com/dex/api/query?q='
+    METAGAME = 'sm'
+    ENDPOINT = 'http://www.smogon.com/dex/_rpc/dump-'.freeze
 
     class << self
-      def request(what, name, fields)
-        query = {
-          what => { 'gen' => METAGAME, 'alias' => aliasize(name) },
-          '$'  => fields
-        }
+      def request(what, name, remote = false)
+        name = aliasize(name)
 
-        query = JSON.generate(query)
-        query = URI.escape(query, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
-        response = JSON.parse open("#{ENDPOINT}#{query}").read
-        response['status'] == 'success' ? response['result'] : response['message']
+        if remote
+          return JSON.parse(req(
+            URI(ENDPOINT + what.to_s),
+            { gen: METAGAME, alias: name }
+          ))
+        end
+
+        unless @_basics
+          @_basics = JSON.parse(req(
+            URI(ENDPOINT + 'basics'),
+            { gen: METAGAME }
+          ))
+        end
+
+        @_basics[what.to_s].find do |x|
+          aliasize(x['name']) == name
+        end
       end
 
       def using_metagame(metagame, &block)
@@ -43,10 +53,20 @@ module Smogon
         end
       end
 
-    private
+      private
 
       def aliasize(string)
         string.downcase.gsub(' ', '_').gsub(/[^a-z0-9_\-]/i, '')
+      end
+
+      def req(uri, body)
+        request = Net::HTTP::Post.new(uri)
+        request.body = body.to_json
+        request.content_type = 'application/json; charset=utf-8'
+
+        Net::HTTP.start(uri.hostname, uri.port) do |http|
+          http.request(request)
+        end.body
       end
     end
   end

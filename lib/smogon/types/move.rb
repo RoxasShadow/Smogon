@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2017 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -18,19 +18,15 @@
 #++
 
 module Smogon
-  class Move
-    attr_accessor :name, :_name, :description, :type, :power, :accuracy, :pp
+  module Type
+    class Move < Base
+      ATTRIBUTES = %w(
+        name category power accuracy pp description type genfamily
+      ).freeze
 
-    def to_s
-      "Name: #{@name}\nDescription: #{@description}\nType: #{@type}\nPower: #{@power}\nAccuracy: #{@accuracy}\nPP: #{@pp}"
-    end
+      attr_accessor(*ATTRIBUTES)
 
-    def url
-      "http://www.smogon.com/dex/#{API::METAGAME}/moves/#{@_name}"
-    end
-
-    %i(priority damage target).each do |m|
-      define_method(m) { '' }
+      TYPE = 'moves'.freeze
     end
   end
 end

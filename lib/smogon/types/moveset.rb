@@ -1,6 +1,5 @@
-#encoding: utf-8
 #--
-# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2017 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -19,19 +18,30 @@
 #++
 
 module Smogon
-  class Moveset
-    attr_accessor :pokemon, :name, :tier, :item, :ability, :nature, :moves, :evs
+  module Type
+    class Moveset < Base
+      ATTRIBUTES = %w(
+        pokemon name tier items abilities natures moves evs ivs
+      ).freeze
 
-    def initialize
-      @item    = []
-      @ability = []
-      @nature  = []
-      @moves   = []
-      @evs     = []
-    end
+      attr_accessor(*ATTRIBUTES)
 
-    def to_s
-      "Pokémon: #{@pokemon}\nSet: #{@name}\nItem: #{@item.join(' / ')}\nAbility: #{@ability.join(' / ')}\nNature: #{@nature.join(' / ')}\nMoves: #{''.tap { |s| @moves.each { |move| s << move.join(' / ') + ', '}}[0..-3]}\nEVs: #{@evs}"
+      def initialize(pokemon, tier, moveset)
+        @pokemon = pokemon
+        @name = moveset['name']
+        # @description = moveset['description']
+        @tier = tier
+        @items = moveset['items']
+        @abilities = moveset['abilities']
+        @natures = moveset['natures']
+        @moves = moveset['moveslots']
+        @evs = moveset['evconfigs'].map(&:values)
+        @ivs = moveset['ivconfigs'].map(&:values)
+      end
+
+      def url
+        "http://www.smogon.com/dex/#{::Smogon::API::METAGAME}/pokemon/#{pokemon}"
+      end
     end
   end
 end

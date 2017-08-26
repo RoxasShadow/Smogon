@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2017 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -19,26 +19,9 @@
 
 module Smogon
   class Itemdex
-    def self.get(name, fields = nil)
-      incapsulate = fields == nil
-
-      fields ||= [
-        'name',
-        'alias',
-        'description'
-      ]
-
-      response = API.request 'item', name, fields
-      return nil      if response.is_a?(String) || response.empty? || response.first.empty?
-      return response if not incapsulate
-
-      response = response.first
-
-      Item.new.tap do |item|
-        item.name        = response['name'       ]
-        item._name       = response['alias'      ]
-        item.description = response['description']
-      end
+    def self.get(name, incapsulate = true)
+      response = API.request(:items, name)
+      Type::Item.new(response)
     end
   end
 end

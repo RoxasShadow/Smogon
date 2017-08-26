@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2017 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -19,34 +19,9 @@
 
 module Smogon
   class Movedex
-    def self.get(name, fields = nil)
-      incapsulate = fields == nil
-
-      fields ||= [
-        'name',
-        'alias',
-        'description',
-        'power',
-        'accuracy',
-        'pp',
-        'type' => ['name'],
-      ]
-
-      response = API.request 'move', name, fields
-      return nil      if response.is_a?(String) || response.empty? || response.first.empty?
-      return response if not incapsulate
-
-      response = response.first
-
-      Move.new.tap do |move|
-        move.name        = response['name'       ]
-        move._name       = response['alias'      ]
-        move.description = response['description']
-        move.type        = response['type'       ].values.join(' / ')
-        move.power       = response['power'      ]
-        move.accuracy    = response['accuracy'   ]
-        move.pp          = response['pp'         ]
-      end
+    def self.get(name)
+      response = API.request(:moves, name)
+      Type::Move.new(response)
     end
   end
 end

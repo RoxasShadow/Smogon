@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2017 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -19,67 +19,34 @@
 
 module Smogon
   class Movesetdex
-    def self.get(name, tier = nil, metagame = nil, fields = nil)
-      incapsulate = fields == nil
-
-      fields ||= [
-        'name',
-        'movesets' => [
-          'name',
-          { 'tags'      => %w(shorthand) },
-          { 'items'     => %w(name)      },
-          { 'abilities' => %w(name)      },
-          { 'natures'   => %w(hp patk pdef spatk spdef spe) },
-          { 'moveslots' => [ 'slot', { 'move' => %(name) } ] },
-          { 'evconfigs' => %w(hp patk pdef spatk spdef spe) }
-        ]
-      ]
-
+    def self.get(name, tier = nil, metagame = nil)
       response = if metagame
-        API.using_metagame(metagame) do
-          API.request 'pokemon', name, fields
+        API.using_metagame(metagame.downcase) do
+          API.request(:pokemon, name, true)
         end
       else
-        API.request 'pokemon', name, fields
+        API.request(:pokemon, name, true)
       end
-      return nil      if response.is_a?(String) || response.empty? || response.first.empty?
-      return response if not incapsulate
 
-      response = response.first
+      strategies = response['strategies']
 
-      results = [].tap do |movesets|
-        response['movesets'].each do |movesetdex|
-          movesets << Moveset.new.tap do |moveset|
-            moveset.pokemon = response['name']
-            moveset.name    = movesetdex['name']
-            moveset.tier    = movesetdex['tags'][0]['shorthand']
-            moveset.item    = movesetdex['items'].collect(&:values).flatten
-            moveset.ability = movesetdex['abilities'].collect(&:values).flatten
-            moveset.nature = movesetdex['natures'].map { |nature| Naturedex.get(nature) }
+      if (tier = tier&.upcase)
+        strategies = [strategies.find do |strategy|
+          strategy['format'] == tier
+        end]
+      end
 
-            moveset.moves = []
-            movesetdex['moveslots'].each do |moveslot|
-              slot = moveslot['slot'] - 1
-
-              if moveset.moves[slot]
-                moveset.moves[slot] << moveslot['move_name']
-              else
-                moveset.moves << [ moveslot['move_name'] ]
-              end
+      [].tap do |movesets|
+        strategies.each do |strategy|
+          # overview, comments
+          tier = strategy['format']
+          movesets.concat(
+            strategy['movesets'].map do |moveset|
+              Type::Moveset.new(name, tier, moveset)
             end
-
-            moveset.evs = [].tap do |evs|
-              evconfigs = movesetdex['evconfigs'].first
-
-              ['hp', 'patk', 'pdef', 'spatk', 'spdef', 'spe'].each do |stat|
-                evs << evconfigs[stat]
-              end if evconfigs
-            end.join ' / '
-          end
+          )
         end
       end
-
-      tier ? results.reject { |moveset| moveset.tier.downcase != tier.downcase } : results
     end
   end
 end

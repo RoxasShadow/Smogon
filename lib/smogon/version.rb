@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2017 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -18,5 +18,5 @@
 #++
 
 module Smogon
-  VERSION = '0.6.2'
+  VERSION = '0.7'
 end

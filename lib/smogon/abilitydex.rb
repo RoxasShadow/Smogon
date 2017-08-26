@@ -1,5 +1,5 @@
 #--
-# Copyright(C) 2015 Giovanni Capuano <webmaster@giovannicapuano.net>
+# Copyright(C) 2017 Giovanni Capuano <webmaster@giovannicapuano.net>
 #
 # This file is part of Smogon-API.
 #
@@ -19,26 +19,9 @@
 
 module Smogon
   class Abilitydex
-    def self.get(name, fields = nil)
-      incapsulate = fields == nil
-
-      fields ||= [
-        'name',
-        'alias',
-        'description'
-      ]
-
-      response = API.request 'ability', name, fields
-      return nil      if response.is_a?(String) || response.empty? || response.first.empty?
-      return response if not incapsulate
-
-      response = response.first
-
-      Ability.new.tap do |ability|
-        ability.name        = response['name'       ]
-        ability._name       = response['alias'      ]
-        ability.description = response['description']
-      end
+    def self.get(name)
+      response = API.request(:abilities, name)
+      Type::Ability.new(response)
     end
   end
 end

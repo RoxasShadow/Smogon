@@ -3,7 +3,7 @@ require 'smogon'
 
 describe 'Movedex' do
   it 'returns infos about the given move' do
-    move = Smogon::Movedex.get 'Extreme Speed'
+    move = Smogon::Movedex.get('Extreme Speed')
 
     expect(move.name).to eq('Extreme Speed')
     expect(move.type).to eq('Normal')
