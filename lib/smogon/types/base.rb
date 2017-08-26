@@ -44,7 +44,12 @@ module Smogon
       end
 
       def url
-        "http://www.smogon.com/dex/#{::Smogon::API::METAGAME}/#{self.class::TYPE}/#{name}"
+        [
+          'http://www.smogon.com/dex',
+          ::Smogon::API::METAGAME,
+          self.class::TYPE,
+          name.gsub(' ', '_')
+        ].join('/')
       end
 
       private
