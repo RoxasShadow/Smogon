@@ -4,7 +4,7 @@ Wrapper around the Smogon APIs to get (Poké|Ability|Item|Move|Moveset)dex data 
 
 Since 2015.
 
-# Setup
+# Setup
 
 `$ gem install smogon`
 
