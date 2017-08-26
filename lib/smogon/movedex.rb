@@ -21,6 +21,7 @@ module Smogon
   class Movedex
     def self.get(name)
       response = API.request(:moves, name)
+      return nil unless response
       Type::Move.new(response)
     end
   end

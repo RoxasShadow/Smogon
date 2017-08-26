@@ -22,6 +22,7 @@ module Smogon
     def self.get(name)
       response = API.request(:pokemon, name)
       moves    = API.request(:pokemon, name, true)['learnset']
+      return nil unless response
       Type::Pokemon.new(response, moves)
     end
   end

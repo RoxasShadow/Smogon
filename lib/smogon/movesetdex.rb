@@ -28,6 +28,8 @@ module Smogon
         API.request(:pokemon, name, true)
       end
 
+      return nil unless response
+
       strategies = response['strategies']
 
       if (tier = tier&.upcase)

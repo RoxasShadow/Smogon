@@ -21,6 +21,7 @@ module Smogon
   class Abilitydex
     def self.get(name)
       response = API.request(:abilities, name)
+      return nil unless response
       Type::Ability.new(response)
     end
   end

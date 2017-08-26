@@ -21,6 +21,7 @@ module Smogon
   class Itemdex
     def self.get(name, incapsulate = true)
       response = API.request(:items, name)
+      return nil unless response
       Type::Item.new(response)
     end
   end

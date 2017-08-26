@@ -9,4 +9,9 @@ describe 'Abilitydex' do
     expect(ability.description.length).to be > 10
     expect(ability.to_s.length).to be > 10
   end
+
+  it 'returns nil with an unknown ability' do
+    ability = Smogon::Abilitydex.get('lolwut')
+    expect(ability).to be_nil
+  end
 end
