@@ -18,6 +18,7 @@
 #++
 
 require 'net/http'
+require 'open-uri'
 require 'json'
 
 require 'smogon/api'

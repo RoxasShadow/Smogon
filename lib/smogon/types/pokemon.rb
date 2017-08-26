@@ -51,11 +51,8 @@ module Smogon
       end
 
       def self.id2name(id)
-        begin
-          Nokogiri::HTML(open("http://www.marriland.com/pokedex/#{id}")).xpath('//div[@class="overview"]/h2')[0].text
-        rescue
-          nil
-        end
+        response = open("http://pokeapi.co/api/v2/pokemon/#{id}")
+        JSON.parse(response.read)['name']
       end
     end
   end
