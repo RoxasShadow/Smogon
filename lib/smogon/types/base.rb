@@ -34,9 +34,10 @@ module Smogon
 
       def to_s
         attributes.map do |attr|
+          key = attr.capitalize.gsub('_', ' ')
           val = public_send(attr)
           val = val.join(', ') if val.is_a?(Array)
-          val == '' ? nil : "#{attr.capitalize}: #{val}"
+          val == '' ? nil : "#{key}: #{val}"
         end.compact.join("\n")
       end
 
